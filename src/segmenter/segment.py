@@ -41,14 +41,15 @@ def accumulate(crossings, threshold=4.6):
                 best_repeater = true_repeater
                 best_accumulator = accumulator
                 # print(str(best_offset) + "\t" + str(best_repeater) + "\t" + str(best_accumulator))
-                if best_accumulator < threshold:
-                    return best_repeater, best_offset
+                if threshold > 0:
+                    if best_accumulator < threshold:
+                        return best_repeater, int(best_offset % best_repeater)
 
     # print(best_accumulator)
     # print(best_offset)
     # print(best_repeater)
 
-    return best_repeater, best_offset
+    return best_repeater, int(best_offset % best_repeater)
 
 """
 Determines the number of crossings for each row of data in the image.
@@ -106,8 +107,8 @@ def segment(img, threshold=4.6):
     y_crossing_counts = crossings(img, axis=0)
     y_repeater, y_offset = accumulate(y_crossing_counts, threshold)
 
-    x_iterations = int((img.shape[1] - x_offset) / x_repeater)
-    y_iterations = int((img.shape[0] - y_offset) / y_repeater)
+    x_iterations = int((img.shape[1] - x_offset) / x_repeater) + 1
+    y_iterations = int((img.shape[0] - y_offset) / y_repeater) + 1
 
     print("Block width: " + str(x_repeater))
     print("Block height: " + str(y_repeater))
@@ -121,9 +122,9 @@ def segment(img, threshold=4.6):
             bottom_bound = int((y_iter + 1) * y_repeater) + y_offset
             left_bound = int(x_iter * x_repeater) + x_offset
             right_bound = int((x_iter + 1) * x_repeater) + x_offset
-            width = right_bound - left_bound
-            height = bottom_bound - top_bound
-            segments[y_iter][x_iter][:height, :width] = img[top_bound:bottom_bound, left_bound:right_bound]
+            letter = img[top_bound:bottom_bound, left_bound:right_bound]
+
+            segments[y_iter][x_iter][:letter.shape[0], :letter.shape[1]] = letter
 
     return segments
 
@@ -145,7 +146,7 @@ def main():
     # increase threshold for debugging
     np.set_printoptions(threshold=10000000)
 
-    segments = segment(img, 3)
+    segments = segment(img, 1)
     # print(segments)
 
     for row in range(segments.shape[0]):
