@@ -16,24 +16,29 @@ Inputs:
 crossings - a 1D array of how many times the color swapped for the given column of data
 threshold - the first result that is below this threshold will be returned,
     set higher for blurrier images.
+
+Outputs:
+repeater - float describing a width of a cell
+offset - integer describing when the first cell starts
 """
 def accumulate(crossings, threshold=4.6):
     size = crossings.shape[0]
     best_offset = 0
     best_repeater = 2
     best_accumulator = float('inf')
-    for repeater in range(2, 100):
+    possible_repeaters = np.linspace(2, 99, num=970)
+    for true_repeater in possible_repeaters:
         for offset in range(100):
             accumulator = 0
-            iterations = ((size - offset) // repeater)
+            iterations = int((size - offset) / true_repeater)
             for iteration in range(iterations):
-                accumulator += crossings[repeater * iteration + offset]
+                accumulator += crossings[int(true_repeater * iteration) + offset]
             # normalize
             accumulator /= iterations
             # print(accumulator)
             if accumulator < best_accumulator:
                 best_offset = offset
-                best_repeater = repeater
+                best_repeater = true_repeater
                 best_accumulator = accumulator
                 # print(str(best_offset) + "\t" + str(best_repeater) + "\t" + str(best_accumulator))
                 if best_accumulator < threshold:
@@ -101,22 +106,24 @@ def segment(img, threshold=4.6):
     y_crossing_counts = crossings(img, axis=0)
     y_repeater, y_offset = accumulate(y_crossing_counts, threshold)
 
-    x_iterations = (img.shape[1] - x_offset) // x_repeater
-    y_iterations = (img.shape[0] - y_offset) // y_repeater
+    x_iterations = int((img.shape[1] - x_offset) / x_repeater)
+    y_iterations = int((img.shape[0] - y_offset) / y_repeater)
 
     print("Block width: " + str(x_repeater))
     print("Block height: " + str(y_repeater))
     print("Optimal x-offset: " + str(x_offset))
     print("Optimal y-offset: " + str(y_offset))
 
-    segments = np.zeros((y_iterations, x_iterations, y_repeater, x_repeater))
+    segments = np.full((y_iterations, x_iterations, int(y_repeater + 1), int(x_repeater + 1)), fill_value = 255)
     for y_iter in range(y_iterations):
         for x_iter in range(x_iterations):
-            top_bound = y_iter * y_repeater + y_offset
-            bottom_bound = (y_iter + 1) * y_repeater + y_offset
-            left_bound = x_iter * x_repeater + x_offset
-            right_bound = (x_iter + 1) * x_repeater + x_offset
-            segments[y_iter][x_iter] = img[top_bound:bottom_bound, left_bound:right_bound]
+            top_bound = int(y_iter * y_repeater) + y_offset
+            bottom_bound = int((y_iter + 1) * y_repeater) + y_offset
+            left_bound = int(x_iter * x_repeater) + x_offset
+            right_bound = int((x_iter + 1) * x_repeater) + x_offset
+            width = right_bound - left_bound
+            height = bottom_bound - top_bound
+            segments[y_iter][x_iter][:height, :width] = img[top_bound:bottom_bound, left_bound:right_bound]
 
     return segments
 
@@ -138,7 +145,7 @@ def main():
     # increase threshold for debugging
     np.set_printoptions(threshold=10000000)
 
-    segments = segment(img, 4.6)
+    segments = segment(img, 3)
     # print(segments)
 
     for row in range(segments.shape[0]):
