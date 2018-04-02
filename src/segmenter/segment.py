@@ -83,7 +83,7 @@ Returns a image thresholded with otsu's method. Inverts the image if it is mostl
 def standardize(img):
     _, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     avg = np.average(img)
-    if avg >= 128:
+    if avg < 128:
         img = 255 - img
 
     return img
@@ -92,7 +92,9 @@ def standardize(img):
 Returns binary image divided into equal sized chunks.
 """
 def segment(img, threshold=4.6):
+
     img = standardize(img)
+
     x_crossing_counts = crossings(img, axis=1)
     x_repeater, x_offset = accumulate(x_crossing_counts, threshold)
 
@@ -101,6 +103,11 @@ def segment(img, threshold=4.6):
 
     x_iterations = (img.shape[1] - x_offset) // x_repeater
     y_iterations = (img.shape[0] - y_offset) // y_repeater
+
+    print("Block width: " + str(x_repeater))
+    print("Block height: " + str(y_repeater))
+    print("Optimal x-offset: " + str(x_offset))
+    print("Optimal y-offset: " + str(y_offset))
 
     segments = np.zeros((y_iterations, x_iterations, y_repeater, x_repeater))
     for y_iter in range(y_iterations):
@@ -123,15 +130,21 @@ def main():
 
     img = cv2.imread(sys.argv[1], 0)
 
+    if img is None:
+        print('Invalid image path!')
+        print('Usage: python segment.py <input>')
+        sys.exit()
+
     # increase threshold for debugging
     np.set_printoptions(threshold=10000000)
 
     segments = segment(img, 4.6)
-    print(segments)
+    # print(segments)
 
     for row in range(segments.shape[0]):
         for col in range(segments.shape[1]):
             cv2.imwrite('./segmenter_output/' + str(row) + "-" + str(col) + ".png" , segments[row][col])
+    print('segments written to /segmenter_output')
 
 
 if __name__ == "__main__":
