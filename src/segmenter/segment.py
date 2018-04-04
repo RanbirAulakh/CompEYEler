@@ -151,7 +151,7 @@ def main():
 
     for row in range(segments.shape[0]):
         for col in range(segments.shape[1]):
-            cv2.imwrite('./segmenter_output/' + str(row) + "-" + str(col) + ".png" , segments[row][col])
+            cv2.imwrite('./image_082/' + str(row) + "-" + str(col) + ".png" , segments[row][col])
     print('segments written to /segmenter_output')
 
 
