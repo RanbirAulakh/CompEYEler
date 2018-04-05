@@ -132,27 +132,39 @@ def segment(img, threshold=4.6):
 Run sample code on the input.
 """
 def main():
-    if len(sys.argv) < 2:
-        print('Usage: python segment.py <input>')
+    if len(sys.argv) < 3:
+        print('Usage: python segment.py <input> <threshold>')
+        print('Good threshold values are between 0 and 10, but may be bigger for larger fonts')
         sys.exit()
 
     img = cv2.imread(sys.argv[1], 0)
 
     if img is None:
         print('Invalid image path!')
-        print('Usage: python segment.py <input>')
+        print('Usage: python segment.py <input> <threshold>')
+        sys.exit()
+
+    threshold = float(sys.argv[2])
+
+    if threshold < 0:
+        print('Threshold must be 0 or more!')
+        print('Usage: python segment.py <input> <threshold>')
+        print('Good threshold values are between 0 and 10, but may be bigger for larger fonts')
         sys.exit()
 
     # increase threshold for debugging
     np.set_printoptions(threshold=10000000)
 
-    segments = segment(img, 1)
+    segments = segment(img, threshold)
     # print(segments)
 
     for row in range(segments.shape[0]):
         for col in range(segments.shape[1]):
-            cv2.imwrite('./image_082/' + str(row) + "-" + str(col) + ".png" , segments[row][col])
+            cv2.imwrite('./segmenter_output/' + str(row) + "-" + str(col) + ".png" , segments[row][col])
     print('segments written to /segmenter_output')
+    print('if segments are not wide enough, decrease the threshold')
+    print('if segments are too wide, increase the threshold')
+    print('there will be better detection for this soon, i promise')
 
 
 if __name__ == "__main__":
