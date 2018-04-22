@@ -1,4 +1,4 @@
-# file: Main.py
+# file: UnskewImage.py
 # team: compEYEler
 # authors: Ranbir Aulakh, Joseph Bartelmo,
 #           Ka Bo Cheung, Brandon Ha, Robbie Kubiniec
@@ -61,6 +61,8 @@ class UnskewImage(object):
 
         if debug:
             cv2.waitKey(0)
+
+        return final_image
 
     # http://felix.abecassis.me/2011/09/opencv-detect-skew-angle/
 

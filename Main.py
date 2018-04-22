@@ -7,6 +7,9 @@
 import argparse
 import logging
 from UnskewImage import UnskewImage
+from DistortImage import DistortImage
+
+import itertools
 
 def main():
     parser = argparse.ArgumentParser()
@@ -27,8 +30,12 @@ def main():
     debug = args.debug
 
     # unskew the image
-    unskewImage = UnskewImage()
-    unskewImage.unSkewTheImage(image, debug)
+    #unskewImage = UnskewImage()
+    #unskewImage.unSkewTheImage(image, debug)
+
+    # distort the image
+    distortImage = DistortImage()
+    distortImage.DistortImage(image, debug)
 
 
 main()
