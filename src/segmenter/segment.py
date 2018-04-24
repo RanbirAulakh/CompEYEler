@@ -21,12 +21,12 @@ Outputs:
 repeater - float describing a width of a cell
 offset - integer describing when the first cell starts
 """
-def accumulate(crossings, threshold=4.6):
+def accumulate(crossings, threshold, search_start):
     size = crossings.shape[0]
     best_offset = 0
     best_repeater = 2
     best_accumulator = float('inf')
-    possible_repeaters = np.linspace(2, 99, num=970)
+    possible_repeaters = np.linspace(search_start, search_start * 2, num=500)
     for true_repeater in possible_repeaters:
         for offset in range(100):
             accumulator = 0
@@ -41,9 +41,9 @@ def accumulate(crossings, threshold=4.6):
                 best_repeater = true_repeater
                 best_accumulator = accumulator
                 # print(str(best_offset) + "\t" + str(best_repeater) + "\t" + str(best_accumulator))
-                if threshold > 0:
-                    if best_accumulator < threshold:
-                        return best_repeater, int(best_offset % best_repeater)
+                # if threshold > 0:
+                #     if best_accumulator < threshold:
+                #         return best_repeater, int(best_offset % best_repeater)
 
     # print(best_accumulator)
     # print(best_offset)
@@ -99,13 +99,48 @@ Returns binary image divided into equal sized chunks.
 """
 def segment(img, threshold=4.6):
 
-    img = standardize(img)
+    img2 = standardize(img)
+
+    edges = cv2.Canny(img2, 100, 200)
+
+    _, contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    max_width = 0
+    max_height = 0
+    widths = []
+    heights = []
+    for c in contours:
+        rect = cv2.boundingRect(c)
+        if rect[2] > max_width:
+            max_height = rect[2]
+        if rect[3] > max_height:
+            max_width = rect[3]
+        widths.append(rect[2])
+        heights.append(rect[3])
+        x,y,w,h = rect
+        cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+
+    widths = sorted(widths)
+    heights = sorted(heights)
+
+    print(heights)
+
+    ninety_five_width = widths[len(widths)//20 * 19]
+    ninety_five_height = heights[len(heights)//20 * 19]
+
+    # cv2.imshow("Show", img)
+    # cv2.waitKey()
+    # cv2.destroyAllWindows()
+
+    print(ninety_five_width)
+    print(ninety_five_height)
+
+    img = img2
 
     x_crossing_counts = crossings(img, axis=1)
-    x_repeater, x_offset = accumulate(x_crossing_counts, threshold)
+    x_repeater, x_offset = accumulate(x_crossing_counts, threshold, ninety_five_width)
 
     y_crossing_counts = crossings(img, axis=0)
-    y_repeater, y_offset = accumulate(y_crossing_counts, threshold)
+    y_repeater, y_offset = accumulate(y_crossing_counts, threshold, ninety_five_height)
 
     x_iterations = int((img.shape[1] - x_offset) / x_repeater) + 1
     y_iterations = int((img.shape[0] - y_offset) / y_repeater) + 1
@@ -132,30 +167,30 @@ def segment(img, threshold=4.6):
 Run sample code on the input.
 """
 def main():
-    if len(sys.argv) < 3:
-        print('Usage: python segment.py <input> <threshold>')
-        print('Good threshold values are between 0 and 10, but may be bigger for larger fonts')
+    if len(sys.argv) < 2:
+        print('Usage: python segment.py <input>')
+        # print('Good threshold values are between 0 and 10, but may be bigger for larger fonts')
         sys.exit()
 
     img = cv2.imread(sys.argv[1], 0)
 
     if img is None:
         print('Invalid image path!')
-        print('Usage: python segment.py <input> <threshold>')
+        print('Usage: python segment.py <input>')
         sys.exit()
 
-    threshold = float(sys.argv[2])
+    # threshold = float(sys.argv[2])
 
-    if threshold < 0:
-        print('Threshold must be 0 or more!')
-        print('Usage: python segment.py <input> <threshold>')
-        print('Good threshold values are between 0 and 10, but may be bigger for larger fonts')
-        sys.exit()
+    # if threshold < 0:
+    #     print('Threshold must be 0 or more!')
+    #     print('Usage: python segment.py <input>')
+    #     # print('Good threshold values are between 0 and 10, but may be bigger for larger fonts')
+    #     sys.exit()
 
     # increase threshold for debugging
     np.set_printoptions(threshold=10000000)
 
-    segments = segment(img, threshold)
+    segments = segment(img, 100)
     # print(segments)
 
     for row in range(segments.shape[0]):
