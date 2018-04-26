@@ -40,7 +40,7 @@ def accumulate(crossings, threshold, search_start):
                 best_offset = offset
                 best_repeater = true_repeater
                 best_accumulator = accumulator
-                print(str(best_offset) + "\t" + str(best_repeater) + "\t" + str(best_accumulator))
+                # print(str(best_offset) + "\t" + str(best_repeater) + "\t" + str(best_accumulator))
                 # if threshold > 0:
                 #     if best_accumulator < threshold:
                 #         return best_repeater, int(best_offset % best_repeater)
