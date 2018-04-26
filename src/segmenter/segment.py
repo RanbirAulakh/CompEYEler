@@ -28,7 +28,7 @@ def accumulate(crossings, threshold, search_start):
     best_accumulator = float('inf')
     possible_repeaters = np.linspace(search_start, search_start * 3, num=500)
     for true_repeater in possible_repeaters:
-        for offset in range(100):
+        for offset in range(search_start):
             accumulator = 0
             iterations = int((size - offset) / true_repeater)
             for iteration in range(iterations):
@@ -40,7 +40,7 @@ def accumulate(crossings, threshold, search_start):
                 best_offset = offset
                 best_repeater = true_repeater
                 best_accumulator = accumulator
-                # print(str(best_offset) + "\t" + str(best_repeater) + "\t" + str(best_accumulator))
+                print(str(best_offset) + "\t" + str(best_repeater) + "\t" + str(best_accumulator))
                 # if threshold > 0:
                 #     if best_accumulator < threshold:
                 #         return best_repeater, int(best_offset % best_repeater)
