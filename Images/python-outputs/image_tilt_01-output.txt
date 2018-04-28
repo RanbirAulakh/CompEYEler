@@ -1,0 +1,4 @@
+try:
+	debug = sys.argv[2]
+except:
+	pass
