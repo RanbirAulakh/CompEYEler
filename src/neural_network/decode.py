@@ -28,7 +28,7 @@ def decode(image, threshold=True):
     # threshold
     if threshold:
         _, image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        image = crop_letter(image)
+    image = crop_letter(image.astype(np.uint8))
     
     # Re-size the letter image to 20x20 pixels to match training data
     letter_image = resize_to_fit(image, 20, 20)
