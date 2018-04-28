@@ -1,0 +1,77 @@
+"""
+Ranbir Aulakh
+Lab 3 | ZigZag
+Sean Strout CS 141.06
+"""
+
+from turtle import *
+
+def penColor(depth):
+    """
+Color function
+% = reminder
+if depth%2 == o then red, otherwise green
+"""
+    if depth%2 == 0:
+        pencolor('red')
+    else:
+        pencolor('green')
+
+def ZZ1(depth, length):
+    """
+    pre-conditions: turtle pen right, facing east.
+    """
+    if depth < 1:
+        pass
+    else:
+        penColor(depth)
+        """
+        post-conditions: turtle pen up, facing up
+        """
+        left(90)
+        forward(length/2)
+        right(90)
+        forward(length)
+        left(45)
+        """
+It goes back to ZZ1 Function
+"""
+        ZZ1(depth-1, length/2)
+        right(45)
+        back(length)
+        left(90)
+        back(length)
+        right(90)
+        back(length)
+        left(45)
+        """
+It goes back to ZZ1 Function
+"""
+        ZZ1(depth-1, length/2)
+        right(45)
+        forward(length)
+        left(90)
+        forward(length/2)
+        right(90)
+        penColor(depth + 1)
+
+
+def main():
+    """
+users input their desire depth
+"""
+    depth = int(input("Enter your depth: "))
+
+    """
+    Makes the speed goes fast
+    """
+    speed('fast')
+    
+    ZZ1(depth, 100)
+    """
+press enter to exit
+"""
+    input("Press Enter to Exit...")
+    bye()
+
+main()

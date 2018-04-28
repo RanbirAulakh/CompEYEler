@@ -1,0 +1,39 @@
+def gm_pull(x):
+	try:	
+		iteration = x[1] + 1
+		url = x[0]
+		callsign = x[2]
+		filename = callsign + str(iteration).rjust(3,'0') + ".txt"
+		record = open(filename,"w")	
+		last_song = x[3]
+		response = urllib2.urlopen(url)
+		counter = 0 
+		first = True
+		new_last_song = last_song	
+		while (counter < 10000):
+			line = response.readline()
+			if '" -' in line:
+				song = line[line.find('"')+1:line.find(" -")-1]
+				artist = line[line.find("- ")+1:]
+				artist = artist.strip()
+				entry = song + "|" + artist + "|" + callsign + "|" + str(time.time()) + "\n"		
+				record.write(entry)
+				"""
+				line = response.readline()
+				line = response.readline()
+				line = response.readline()
+				line = response.readline()
+				if "Visit iTunes" in line:
+					itunes_link = line[line.find('href="')+5:line.find('" target="')]
+					TO DO: CREATE FILE
+					WRITE ITUNES LINKS TO IT
+					THEN, LATER, GRAB ALBUM RELEASE YEARS
+				"""
+			counter = counter + 1
+		y = (x[0],iteration,x[2],new_last_song)
+		record.close()	
+		time.sleep(3)
+		return y		
+	except:
+		time.sleep(3)
+		return x
