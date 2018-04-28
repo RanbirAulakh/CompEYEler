@@ -41,7 +41,6 @@ def compeyele(image, \
     else:
         image_characters = segment(grey, greedy_thresh)
 
-    print(image_characters.shape)
     if template_match:
         #template match
         pass

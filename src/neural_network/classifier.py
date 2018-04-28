@@ -18,6 +18,7 @@ For keeping track of all images that do not have a name
 relating to the actual character
 """
 FONT_MAP = {
+    "space": " ",
     "ampersand" : "&",
     "asciicircum" : "^",
     "asciitilde" : "~",

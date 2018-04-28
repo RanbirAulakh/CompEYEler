@@ -1,6 +1,6 @@
 import imutils
 import cv2
-
+import numpy as np
 
 def resize_to_fit(image, width, height):
     """
@@ -14,16 +14,16 @@ def resize_to_fit(image, width, height):
     # grab the dimensions of the image, then initialize
     # the padding values
     (h, w) = image.shape[:2]
-
+    image = np.array(image).astype(np.uint8)
     # if the width is greater than the height then resize along
     # the width
     if w > h:
-        image = imutils.resize(image.copy(), width=width)
+        image = cv2.resize(image, (width, image.shape[0]))
 
     # otherwise, the height is greater than the width so resize
     # along the height
     else:
-        image = imutils.resize(image.copy(), height=height)
+        image = cv2.resize(image, (image.shape[1], height))
 
     # determine the padding values for the width and height to
     # obtain the target dimensions
