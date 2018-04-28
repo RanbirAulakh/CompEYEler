@@ -6,6 +6,7 @@ import cv2
 import pickle
 import sys
 import os.path	
+import classifier
 
 
 MODEL_FILENAME = "model.hdf5"
@@ -23,11 +24,14 @@ model = load_model(MODEL_FILENAME)
 """
 Decodes an image using the pre-trained model.
 """
-def decode(image):
+def decode(image, threshold=True):
     # threshold
-    _, image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    image = crop_letter(image)
+    if threshold:
+        _, image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        image = crop_letter(image)
     
+    print (image.shape)
+    print(image)
     # Re-size the letter image to 20x20 pixels to match training data
     letter_image = resize_to_fit(image, 20, 20)
 
@@ -40,6 +44,8 @@ def decode(image):
 
     # Convert the one-hot-encoded prediction back to a normal letter
     letter = lb.inverse_transform(prediction)[0]
+    if letter in classifier.FONT_MAP:
+        return classifier.FONT_MAP[letter]
     return letter
 
 def main():
@@ -55,9 +61,7 @@ def main():
         print('Usage: python decode.py <input>')
         sys.exit()
 
-    for image_file in paths.list_images(VALIDATION_FOLDER):
-        image = cv2.imread(image_file, 0)
-        print(image_file + ": " + decode(image))
+    print(decode(img))
     
     
 if __name__ == "__main__":

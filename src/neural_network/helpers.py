@@ -18,12 +18,12 @@ def resize_to_fit(image, width, height):
     # if the width is greater than the height then resize along
     # the width
     if w > h:
-        image = imutils.resize(image, width=width)
+        image = imutils.resize(image.copy(), width=width)
 
     # otherwise, the height is greater than the width so resize
     # along the height
     else:
-        image = imutils.resize(image, height=height)
+        image = imutils.resize(image.copy(), height=height)
 
     # determine the padding values for the width and height to
     # obtain the target dimensions
@@ -32,9 +32,9 @@ def resize_to_fit(image, width, height):
 
     # pad the image then apply one more resizing to handle any
     # rounding issues
-    image = cv2.copyMakeBorder(image, padH, padH, padW, padW,
+    image = cv2.copyMakeBorder(image.copy(), padH, padH, padW, padW,
         cv2.BORDER_REPLICATE)
-    image = cv2.resize(image, (width, height))
+    image = cv2.resize(image.copy(), (width, height))
 
     # return the pre-processed image
     return image
