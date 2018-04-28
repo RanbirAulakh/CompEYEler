@@ -30,8 +30,14 @@ labels = []
 # loop over the input images
 for image_file in paths.list_images(LETTER_IMAGES_FOLDER):
     # Load the image and convert it to grayscale
-    image = cv2.imread(image_file)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    image = cv2.imread(image_file, 0)
+    
+    if image is None:
+        # the filename was probably too long
+        print("WARNING: We couldn't open this image, its filename is probably too long:")
+        print(image_file)
+        continue
+    
     
     # threshold
     _, image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -84,7 +90,7 @@ model.add(Flatten())
 model.add(Dense(500, activation="relu"))
 
 # Output layer with 70 nodes (one for each possible letter/number we predict)
-model.add(Dense(97, activation="softmax"))
+model.add(Dense(72, activation="softmax"))
 
 # Ask Keras to build the TensorFlow model behind the scenes
 model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
