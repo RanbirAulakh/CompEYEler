@@ -1,0 +1,25 @@
+"""
+Using a crossings array and a threshold, determine the
+width and offset needed to divide the image into fixed width segments.
+
+Inputs:
+crossings - a 1D array of how many times the color swapped for the given column of data
+threshold - the first result that is below this threshold will be returned,
+    set higher for blurrier images.
+
+Outputs:
+repeater - float describing a width of a cell
+offset - integer describing when the first cell starts
+"""
+def accumulate(crossings, threshold=4.6):
+    size = crossings.shape[0]
+    best_offset = 0
+    best_repeater = 2
+    best_accumulator = float('inf')
+    possible_repeaters = np.linspace(2, 99, num=970)
+    for true_repeater in possible_repeaters:
+        for offset in range(100):
+            accumulator = 0
+            iterations = int((size - offset) / true_repeater)
+            for iteration in range(iterations):
+                accumulator += crossings[int(true_repeater * iteration) + offset]
