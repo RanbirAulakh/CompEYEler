@@ -16,6 +16,7 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras._impl.keras.layers.convolutional import Conv2D, MaxPooling2D
 from tensorflow.python.keras._impl.keras.layers.core import Flatten, Dense
 from helpers import resize_to_fit
+from helpers import crop_letter
 
 LETTER_IMAGES_FOLDER = "images"
 MODEL_FILENAME = "model.hdf5"
@@ -31,7 +32,11 @@ for image_file in paths.list_images(LETTER_IMAGES_FOLDER):
     # Load the image and convert it to grayscale
     image = cv2.imread(image_file)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
+    
+    # threshold
+    _, image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    image = crop_letter(image)
+    
     # Resize the letter so it fits in a 20x20 pixel box
     image = resize_to_fit(image, 20, 20)
 

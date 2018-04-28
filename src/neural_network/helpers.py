@@ -38,3 +38,17 @@ def resize_to_fit(image, width, height):
 
     # return the pre-processed image
     return image
+
+def crop_letter(image):
+    # find the contours (continuous blobs of pixels) the image
+    image_inv = 255 - image
+    
+    # bound
+    x, y, w, h = cv2.boundingRect(image_inv)
+    
+    if (w == 0 or h == 0):
+        # this image is a space
+        return image
+    else:
+        return image[y:y + h, x:x + w]
+    

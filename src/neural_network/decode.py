@@ -1,5 +1,6 @@
 from tensorflow.python.keras.models import load_model
 from helpers import resize_to_fit
+from helpers import crop_letter
 import numpy as np
 import cv2
 import pickle
@@ -23,6 +24,10 @@ model = load_model(MODEL_FILENAME)
 Decodes an image using the pre-trained model.
 """
 def decode(image):
+    # threshold
+    _, image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    image = crop_letter(image)
+    
     # Re-size the letter image to 20x20 pixels to match training data
     letter_image = resize_to_fit(image, 20, 20)
 
