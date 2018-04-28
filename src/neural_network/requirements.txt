@@ -1,0 +1,14 @@
+#pip requirements
+numpy
+scipy
+jupyter
+matplotlib
+Pillow
+scikit-learn
+tensorflow		# CPU Version of TensorFlow.
+# tensorflow-gpu	# GPU version of TensorFlow.
+prettytensor
+opencv-python
+keras
+imutils
+sklearn
