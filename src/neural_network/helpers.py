@@ -27,8 +27,8 @@ def resize_to_fit(image, width, height):
 
     # determine the padding values for the width and height to
     # obtain the target dimensions
-    padW = int((width - image.shape[1]) / 2.0)
-    padH = int((height - image.shape[0]) / 2.0)
+    padW = int(abs(width - image.shape[1]) / 2.0)
+    padH = int(abs(height - image.shape[0]) / 2.0)
 
     # pad the image then apply one more resizing to handle any
     # rounding issues
