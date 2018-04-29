@@ -28,7 +28,7 @@ def main():
     with open(sys.argv[2]) as f:
         for row, line in enumerate(f):
             for col, letter in enumerate(line):
-                if letter == '\n' or letter == '\r':
+                if letter == '\n' or letter == '\r' or letter == '\t':
                     continue
                 label = letter
                 # print(str(row) + " " + str(col))
