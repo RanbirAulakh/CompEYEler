@@ -9,8 +9,12 @@ import sys
 sys.path.append("../segmenter")
 sys.path.append("../neural_network")
 sys.path.append("../conv_segment")
-from joeutils import imshow
+from segment import segment
+from conv_segment import perform_conv_segmentation
+from decode import decode
+#from joeutils import imshow, flush
 import cv2
+import numpy as np
 
 def train_compeyele(image, \
         conv_segment=False, \
@@ -36,19 +40,16 @@ def train_compeyele(image, \
     result = ""
     for row in range(image_characters.shape[0]):
         for col in range(image_characters.shape[1]):
-            result += decode(image_characters[row][col], False)
-        result += "\n"
+            # if you're a space
+            if (image_characters[row][col].astype(np.uint8) - 255).sum() == 0:
+                result += " "
+            else:
+                import matplotlib.pyplot as plt
+                plt.imshow(image_characters[row][col])
+                plt.show()
+                char = input("Enter Character>")
+                result += char
     return result
-
-def find_best_epoch(min_epoch=1, max_epoch=1000):
-    """
-    Iterates over epochs min-max, produces graphs for all in terms of accuracy
-    against the training set we have
-    """
-    for i in range(min_epoch, max_epoch):
-        train_network(min_epoch)
-
-
 
 def main():
     """
@@ -57,9 +58,13 @@ def main():
     import sys
     import matplotlib.pyplot as plt
     if len(sys.argv) != 2:
-        print('usage: python train.py')
+        print('usage: python generate_accuracy_test_set.py <image>')
+        print('\t<image>: Image to load from disk to test off of with segmenter')
         sys.exit()
-    find_best_epoch()
+    print(sys.argv[1])
+    res = train_compeyele(cv2.imread(sys.argv[1]))
+    with open(argv[1] + ".txt", "w") as text_file:
+        text_file.write(res)
 
 if __name__ == '__main__':
     main()

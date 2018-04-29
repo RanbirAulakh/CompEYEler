@@ -1,4 +1,3 @@
-import imutils
 import cv2
 import numpy as np
 
@@ -15,15 +14,12 @@ def resize_to_fit(image, width, height):
     # the padding values
     (h, w) = image.shape[:2]
     image = np.array(image).astype(np.uint8)
-    # if the width is greater than the height then resize along
-    # the width
-    if w > h:
-        image = cv2.resize(image, (width, image.shape[0]))
 
-    # otherwise, the height is greater than the width so resize
-    # along the height
-    else:
-        image = cv2.resize(image, (image.shape[1], height))
+    image = cv2.resize(image, (width, height))
+
+    # cv2.imshow('image', image)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     # determine the padding values for the width and height to
     # obtain the target dimensions
@@ -50,5 +46,8 @@ def crop_letter(image):
         # this image is a space
         return image
     else:
-        return image[y:y + h, x:x + w]
+        cut = image[y:y+h, x:x+w]
+        white = 255
+        image = cv2.copyMakeBorder(cut, 1, 1, 1, 1, cv2.BORDER_CONSTANT, value=white)
+        return image
     
