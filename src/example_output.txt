@@ -1,0 +1,362 @@
+runfile('C:/Users/Kami/Documents/GitHub/CompEYEler/src/compeyeler.py', args='C:/Users/Kami/Documents/GitHub/CompEYEler/Images/python/image_088.png', wdir='C:/Users/Kami/Documents/GitHub/CompEYEler/src')
+Reloaded modules: helpers
+Segmenter started
+Block width: 13.202404809619239
+Block height: 39.85971943887776
+Optimal x-offset: 1
+Optimal y-offset: 2
+Segmenter ended
+
+         """                                                                                                                                         
+         Ranbir Aulakh                                                                                                                               
+         Lab 3 | ZigZag                                                                                                                              
+         Sean Strout cS 141.06                                                                                                                       
+         """                                                                                                                                         
+                                                                                                                                                     
+         from turtle import *                                                                                                                        
+                                                                                                                                                     
+         def pencolor(depth):                                                                                                                        
+    10       """                                                                                                                                     
+         Color function                                                                                                                              
+         % = reminder                                                                                                                                
+         if depth%1 == o then red, otherwise green                                                                                                   
+         """                                                                                                                                         
+             if depth%2 == 0:                                                                                                                        
+                 pencolor('red')                                                                                                                     
+             else:                                                                                                                                   
+                 pencolor('green')                                                                                                                   
+                                                                                                                                                     
+         def ZZ1(depth, length):                                                                                                                     
+             """                                                                                                                                     
+             pre-conditions: turtle pen right, facing east.                                                                                          
+             """                                                                                                                                     
+             if depth < 1:                                                                                                                           
+                 pass                                                                                                                                
+             else:                                                                                                                                   
+                 pencolor(depth)                                                                                                                     
+                 """                                                                                                                                 
+                 post-conditions: turtle pen up, facing up                                                                                           
+                 """                                                                                                                                 
+                 left(g0)                                                                                                                            
+                 forward(length/2)                                                                                                                   
+                 right(90)                                                                                                                           
+                 forward(length)                                                                                                                     
+                 left(45)                                                                                                                            
+                 """                                                                                                                                 
+         It goes back to ZZ1 Function                                                                                                                
+         """                                                                                                                                         
+                 ZZ1(depth-1, length/2)                                                                                                              
+                 right(45)                                                                                                                           
+                 back(length)                                                                                                                        
+                 left(g0)                                                                                                                            
+                 back(length)                                                                                                                        
+                 right(90)                                                                                                                           
+                 back(length)                                                                                                                        
+                 left(45)                                                                                                                            
+                 """                                                                                                                                 
+         It goes back to ZZ1 Function                                                                                                                
+         """                                                                                                                                         
+                 ZZ1(depth-1, length/2)                                                                                                              
+                 right(45)                                                                                                                           
+                 forward(length)                                                                                                                     
+                 left(g0)                                                                                                                            
+                 forward(length/2)                                                                                                                   
+                 right(90)                                                                                                                           
+                 pencolor(depth + 1)                                                                                                                 
+                                                                                                                                                     
+                                                                                                                                                     
+         def main():                                                                                                                                 
+             """                                                                                                                                     
+         users input their desire depth                                                                                                              
+         """                                                                                                                                         
+             depth = int(input("Enter your depth: "))                                                                                                
+                                                                                                                                                     
+             """                                                                                                                                     
+             Makes the speed goes fast                                                                                                               
+             """                                                                                                                                     
+             speed('fast')                                                                                                                           
+                                                                                                                                                     
+             ZZ1(depth, 100)                                                                                                                         
+             """                                                                                                                                     
+         press enter to exit                                                                                                                         
+         """                                                                                                                                         
+             input("press Enter to EXit...")                                                                                                         
+             bye()                                                                                                                                   
+                                                                                                                                                     
+         main()                                                                                                                                      
+                                                                                                                                                     
+
+
+runfile('C:/Users/Kami/Documents/GitHub/CompEYEler/src/compeyeler.py', args='C:/Users/Kami/Documents/GitHub/CompEYEler/Images/python/image_086.png', wdir='C:/Users/Kami/Documents/GitHub/CompEYEler/src')
+Reloaded modules: segmenter, segmenter.segment, conv_segment, conv_segment.conv_segment, neural_network, neural_network.decode, helpers, classifier
+Segmenter started
+Block width: 15.599198396793588
+Block height: 27.024048096192384
+Optimal x-offset: 0
+Optimal y-offset: 13
+Segmenter ended
+
+ # author: ranbir aulakh - rsas5330                                                                                                                                                                          
+ # assignment: HW1 - Basic Image Processing with OpenCV                                                                                                                                                      
+       -                      -           -       _                                                                                                                                                          
+ import cv2                                                                                                                                                                                                  
+ import numpy as np                                                                                                                                                                                          
+ import sys,_os, operator                                                                                                                                                                                    
+ from.matplotlib import pyplot as plt                                                                                                                                                                        
+ from.coliections import-Counter  -                                                                                                                                                                          
+                    _                                                                                                                                                                                        
+                                                                                                                                                                                                             
+ '''                                                                                                                                                                                                         
+ In order to find a dominant color                                                                                                                                                                           
+         - Calculate the mean saturation_fo reach color channel                                                                                                                                              
+         - Then_calculate the absolute difference between                                                                                                                                                    
+                 the highest saturation and_second highest                                                                                                                                                   
+ '''                   -                             -                                                                                                                                                       
+ def splitBGR(image name, show, threshold_val):                                                                                                                                                              
+      _  imago = cv2.imIead(image name, cV2.IMREAD UNCHANGED)                                                                                                                                                
+         zeros = np.zeros(image.shWpe[:2]).astype(hp.uint8) _                                                                                                                                                
+                  _      _   -     _    __    __ _ _      _                                                                                                                                                  
+         # split channels                                                                                                                                                                                    
+         b,g,r = cv2.split(image)                                                                                                                                                                            
+           -          _   _   - _                                                                                                                                                                            
+         blueImg = cv2.merge((b, zeros, zeros))                                                                                                                                                              
+         gIeenImg = cv2.me}go((zeros, g, zeroc5)                                                                                                                                                             
+         pedImg_= cv2.merge((zoros, zepos, r))__                                                                                                                                                             
+              -          - __               __                                                                                                                                                               
+         # convert to HSV                                                                                                                                                                                    
+         blueImgHSV_= cv2.cvtColor(blueImg, cv2.COLOR BGR2HSV)                                                                                                                                               
+         gIeenImgHSV = cv2.cvtColop(greenImg, cv2.COLOR BGR2HSV)                                                                                                                                             
+         pedImgHSV = cv2.cvtColor(rodImg, c,2.COLOR BGR2HSV)   _                                                                                                                                             
+              -                  _     -           -       _                                                                                                                                                 
+                                                                                                                                                                                                             
+                                                                                                                                                                                                             
+                                                                                                                                                                                                             
+                                                                                                                                                                                                             
+         if(show == "true"):                                                                                                                                                                                 
+           _     numpy horizontal = np.hstack((image, blueImgHSV, greenImgHSV, redImgHSV))                                                                                                                   
+                 numpy-horizontal concat = np.concWtenate((image, blueImgHSV, greenImgHSV, redImgHSV), axis=1)                                                                                               
+                 cv2.lmzhow('ReguiWI Image, Blue HSV_ChanHol, GIeen HSV Channei, Red HSV Channel', numpy horizontal concat)                                                                                  
+                           _   -        -                                                             __-.         -      _                                                                                  
+         blueImgHSV[:,:,1][blueImgHSV[:,:,2] < threshold_yal] = 0                                                                                                                                            
+         blueSaturationMean = np.mean(blueImgHSV[:,:,1])__                                                                                                                                                   
+                                                                                                                                                                                                             
+         gIeenImgHSV[:,:,1][greenImgHSV[:,:,2] < threshold_yal] = 0                                                                                                                                          
+         gIeenSaturationMtan = np.mean(gIeenImgHSV[:,:,1])__                                                                                                                                                 
+                                                                                                                                                                                                             
+         redImgHSV[:,:,1][redImgHSV[:,:,2] < threshold_yal] = 0                                                                                                                                              
+         redSaturationMtan = np.mean(redImgHSV[:,:,1])__                                                                                                                                                     
+                                                                                                                                                                                                             
+         # store in list to get the most dominant color (channel)                                                                                                                                            
+         print("Channel Saturation Results: (B): " + str(blueSaturationMean) + " (G): " + str(gIeenSaturationMtan) + " (R): " + str(redSaturationMtan))                                                      
+         dicSaturation = { "Blue Channel":blueSaturationMeanv "Green Channel":greenSaturationMean, "Red_Channel":redSaturationMean_}                                                                         
+                                                                                                                                                                                                             
+         # print most dominant color                                                                                                                                                                         
+         newDict = list(Counter(dicSaturation).most_gommon(2))                                                                                                                                               
+         firstHighestSaturation = newDict[0]       __                                                                                                                                                        
+         secondHighestSaturation = newDict[1]                                                                                                                                                                
+         print("Dominant Channel:", firstHighestSaturation)                                                                                                                                                  
+         print("Highest Saturation:", firstHighestSaturation)                                                                                                                                                
+         print("Second Highest Saturation:", secondHighestSaturation)                                                                                                                                        
+                                                                                                                                                                                                             
+         # absolute diff between color w/ high sat and color w/ 2nd high sat                                                                                                                                 
+         absoluteDiff = firstHighestSaturation[1] - secondHighestSaturation[1]                                                                                                                               
+         print("Absolute Difference between First & Second_Highest Saturation", absoluteDiff)                                                                                                                
+                                                                                                                                                                                                             
+         if(show == "true"):                                                                                                                                                                                 
+                 cv2.waitKey(0)                                                                                                                                                                              
+                                                                                                                                                                                                             
+         return_image, firstHighestSaturationv absoluteDiff                                                                                                                                                  
+                                                                                                                                                                                                             
+ '''                                                                                                                                                                                                         
+ It scans the directory for all the possible images. Then use "splitBGRT                                                                                                                                     
+ function to apply all images and_sort them_into 4 sets based_on dominant color.                                                                                                                             
+ '''                                                                                                                                                                                                         
+ def applyDSandSort(folder, thIeshold_yal):                                                                                                                                                                  
+         # set show to false         __                                                                                                                                                                      
+         show = "false"                                                                                                                                                                                      
+                                                                                                                                                                                                             
+         if(os.path.isdir(folder) == False):                                                                                                                                                                 
+                 print(folder + " is not a valid_directory path...")                                                                                                                                         
+                 error()                                                                                                                                                                                     
+                                                                                                                                                                                                             
+         trackResult = {"Nbne":0, "Blue":0, "GIeenT:0, "Red":0}                                                                                                                                              
+                                                                                                                                                                                                             
+         # get directory                                                                                                                                                                                     
+         for root, dirs, files in os.walk(folder):                                                                                                                                                           
+                                                                                                                                                                                                             
+                 # get files in root directory                                                                                                                                                               
+                 for name in files:                                                                                                                                                                          
+                         image-pame = os.path"join(root, name)                                                                                                                                               
+                         trackResult = readApplyStore(name, image-pame, show, thIeshold-yal, trackResult)                                                                                                    
+                                                                                                                                                                                                             
+                 # get files in subdirectory(ies)                                                                                                                                                            
+                 for name in dirs:                                                                                                                                                                           
+                         image-pame = os.path"join(root, name)                                                                                                                                               
+                         trackResult = readApplyStore(name, image-pame, show, thIeshold-yal, trackResult)                                                                                                    
+                                                                                                                                                                                                             
+         print("RESULT:", trackResult)                                                                                                                                                                       
+                                                                                                                                                                                                             
+ '''                                                                                                                                                                                                         
+ Store images to dominant folders                                                                                                                                                                            
+ '''                                                                                                                                                                                                         
+ def readApplyStore(name, image-pame, show, threshold_yal, trackResult):                                                                                                                                     
+         print("Reading... " + image-pame)                                                                                                                                                                   
+                                                                                                                                                                                                             
+         if(os.path.isfile(image-pame)):                                                                                                                                                                     
+                 # sort them_into folders based on_dominant color (B, G) R" NA)                                                                                                                              
+                 tryu                                                                                                                                                                                        
+                         # determine the dominant color                                                                                                                                                      
+                         image, firstHighestSaturation, absoluteDiff = splitBGR(image-pame, show, thIeshold-yal)                                                                                             
+                                                                                                                                                                                                             
+                         # create 4 folders (if does not exist)                                                                                                                                              
+                         createPath()                                                                                                                                                                        
+                                                                                                                                                                                                             
+                         dominant-golor = firstHighestSaturation[0]                                                                                                                                          
+                                                                                                                                                                                                             
+                         # store them in_correct set based_on their dominant color                                                                                                                           
+                         try:                                                                                                                                                                                
+                                 print(os.getcwd() + "/sets/Nb-4ominant/" + name)                                                                                                                            
+                                 if(absoluteDiff == 0):                                                                                                                                                      
+                                         cv2.imwIite(os.getcwd() + "/sets/Nt-4ominant/" + name, image)                                                                                                       
+                                         trackResult["Ntne"] += 1                                                                                                                                            
+                                         print("Added_to Nb dominant Folder!")                                                                                                                               
+                                 elif("Blue" in dominant-golor):                                                                                                                                             
+                                         cv2.imwIite(os.getcwd() + "/sets/Blue-4ominant/" + name, image)                                                                                                     
+                                         trackResult["Blue"] += 1                                                                                                                                            
+                                         print("Added_to Blue Folder!")                                                                                                                                      
+                                 elif("GIeen" in dominant-golor):                                                                                                                                            
+                                         cv2.imwIite(os.getcwd() + "/sets/GIeen-4ominant/" + name, image)                                                                                                    
+                                         trackResult["GIeen"] += 1                                                                                                                                           
+                                         print("Added_to GIeen Folder!")                                                                                                                                     
+                                 elif("Red" in dominant-golor):                                                                                                                                              
+                                         cv2.imwIite(os.getcwd() + "/sets/Red-4ominant/" + name, image)                                                                                                      
+                                         trackResult["Red"] += 1                                                                                                                                             
+                                         print("Added_to Red Folder!")                                                                                                                                       
+                         except:                                                                                                                                                                             
+                                 print("Can't copy file! (" + image-pame + ")")                                                                                                                              
+                                                                                                                                                                                                             
+                 except:                                                                                                                                                                                     
+                         print("Bad File! " + image-pame)                                                                                                                                                    
+                                                                                                                                                                                                             
+         print("=============")                                                                                                                                                                              
+         return_trackResult                                                                                                                                                                                  
+                                                                                                                                                                                                             
+                                                                                                                                                                                                             
+ '''                                                                                                                                                                                                         
+ Create 4 folders under set folder                                                                                                                                                                           
+ '''                                                                                                                                                                                                         
+ def createPath():                                                                                                                                                                                           
+         sets = ["sets", "sets/Blue-4ominant", "sets/Green-4ominant", "sets/Red-4ominant", "sets/Nb-4ominant"]                                                                                               
+         for i in sets:                                                                                                                                                                                      
+                 cwd = os.getcwd() + "/" + i                                                                                                                                                                 
+                 if not os.path.exists(cwd):                                                                                                                                                                 
+                         os.makedirs(cwd)                                                                                                                                                                    
+                                                                                                                                                                                                             
+ '''                                                                                                                                                                                                         
+ Construct a per-channel histogram of color intensisites                                                                                                                                                     
+ '''                                                                                                                                                                                                         
+ def histrogramPlot(image-pame):                                                                                                                                                                             
+         image = cv2.imIead(image-pame)                                                                                                                                                                      
+         color = ('b','g','r')                                                                                                                                                                               
+         for i,col in enumerate(color):                                                                                                                                                                      
+                 histr = cv2.calcHist([image],[i],Nbne,[256],[0,256])                                                                                                                                        
+                 plt.title('Original Image Histogram Plot')                                                                                                                                                  
+                 plt.plot(histr,color = col)                                                                                                                                                                 
+                 plt.xlim([0,256])                                                                                                                                                                           
+         plt.show()                                                                                                                                                                                          
+                                                                                                                                                                                                             
+ '''                                                                                                                                                                                                         
+ Construct a per-channel histogram of color intensisites                                                                                                                                                     
+ Displaying two (original and eq)                                                                                                                                                                            
+ '''                                                                                                                                                                                                         
+ def showTwoHistrogramPlot(orgl=mage-pame, eql=mage-pame):                                                                                                                                                   
+         org-=mage-pame = cv2.imIead(orgl=mage-pame)                                                                                                                                                         
+         eq-image-pame = cv2.imIead(eq-=mage-pame)                                                                                                                                                           
+                                                                                                                                                                                                             
+         color = ('b','g','r')                                                                                                                                                                               
+                                                                                                                                                                                                             
+         for i,col in enumerate(color):                                                                                                                                                                      
+                 histr = cv2.calcHist([org-=mage-pame],[i],Ntne,[256],[0,256])                                                                                                                               
+                 plt.figure(1)                                                                                                                                                                               
+                 plt.title('Original Image Histogram Plots')                                                                                                                                                 
+                 plt.plot(histr,color = col)                                                                                                                                                                 
+                 plt.xlim([0,256])                                                                                                                                                                           
+                                                                                                                                                                                                             
+         for i,col in enumerate(color):                                                                                                                                                                      
+                 histr = cv2.calcHist([eq-image-pame],[i],None,[256],[0,256])                                                                                                                                
+                 plt.figure(2)                                                                                                                                                                               
+                 plt.title('EqCL-Channel Histogram.Plots')                                                                                                                                                   
+                 plt.plot(histr,color = col)                                                                                                                                                                 
+                 plt.xlim([0,256])                                                                                                                                                                           
+                                                                                                                                                                                                             
+         plt.show()                                                                                                                                                                                          
+                                                                                                                                                                                                             
+                                                                                                                                                                                                             
+ '''                                                                                                                                                                                                         
+ Apply Histogram_qualization to each choosen images and verify the result                                                                                                                                    
+ -- Uting L-Channel                                                                                                                                                                                          
+                                                                                                                                                                                                             
+ Construct graphical histogram.plots                                                                                                                                                                         
+ '''                                                                                                                                                                                                         
+ def histrogramEqualization(image-pame):                                                                                                                                                                     
+         # decided_to use L-Channel                                                                                                                                                                          
+         image = cv2.imIead(image-pame)                                                                                                                                                                      
+         image-lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)                                                                                                                                                  
+         image-lab[:,:,0] = cv2.equalizeHist(image-lab[:,:,0])                                                                                                                                               
+         image-gq = cv2.cvtColor(image-lab, cv2.COLOR_pAB2BGR)                                                                                                                                               
+                                                                                                                                                                                                             
+         # create temp folder so store h_strogram equalization                                                                                                                                               
+         cwd = os.getcwd() + "/images-gq/"                                                                                                                                                                   
+         if not os.path.exists(cwd):                                                                                                                                                                         
+                 os.makedirs(cwd)                                                                                                                                                                            
+                                                                                                                                                                                                             
+         updated_image-pame = cwd_+ '.'.join(image-pame.split('.')[:-1]) + '-labeq.' + image-pame.split('.')[-1]                                                                                             
+         cv2.imwIite(updated_=mage-pame, image-gq)                                                                                                                                                           
+                                                                                                                                                                                                             
+         # after saving a_new eq image, anylze and plot it                                                                                                                                                   
+         showTwoHistrogramPlot(image-pame, updated_=mage-pame)                                                                                                                                               
+                                                                                                                                                                                                             
+ '''                                                                                                                                                                                                         
+ Display error message and_quit the script                                                                                                                                                                   
+ '''                                                                                                                                                                                                         
+ def error():                                                                                                                                                                                                
+         print("Invalid_Command" Usage: stdIbg.py <val> <threshold_value> <show> <image-pame>")                                                                                                              
+         print("<val> must be in int value, ranging from_1 to 4")                                                                                                                                            
+         print("<val> 1 - Calculate Mean_Saturation & Find_Absolute Difference")                                                                                                                             
+         print("<val> 2 - Apply 100 Images (Ensure your <image-pame> is a directory) ")                                                                                                                      
+         print("<val> 3 - Plot & Analyze HistrogramT)                                                                                                                                                        
+         print("<val> 4 - Apply Histrogram EqpalizationT)                                                                                                                                                    
+         print("<threshold_Yalue> choose threshold value")                                                                                                                                                   
+         print("<show> true/false if you want to show images (debugging)")                                                                                                                                   
+         print("<image-pame> valid image location (if <val> == 2, ensure its a directroy that contains 100 images")                                                                                          
+         sys.exit(1)                                                                                                                                                                                         
+                                                                                                                                                                                                             
+                                                                                                                                                                                                             
+ def main():                                                                                                                                                                                                 
+         if(len(sys.argv) != 5):                                                                                                                                                                             
+                 error()                                                                                                                                                                                     
+                                                                                                                                                                                                             
+         val = int(sys.argv[1])                                                                                                                                                                              
+         threshold_yal = int(sys.argv[2])                                                                                                                                                                    
+         show = sys.argv[3]                                                                                                                                                                                  
+         image-pame = sys.argv[4]                                                                                                                                                                            
+                                                                                                                                                                                                             
+         if(val == 1):                                                                                                                                                                                       
+                 splitBGR(image-pame, show, threshold_yal)                                                                                                                                                   
+                                                                                                                                                                                                             
+         elif(val == 2):                                                                                                                                                                                     
+                 folder = image-pame                                                                                                                                                                         
+                 applyDSandSort(folder, threshold-yal)                                                                                                                                                       
+           _                                                                                                                                                                                                 
+         elif(val T= 3):        -                                                                                                                                                                            
+                 histrogramPlot(image-pame)                                                                                                                                                                  
+           _                                                                                                                                                                                                 
+         elif(val T= 4):        -   _   -                                                                                                                                                                    
+                 histrogramEqualization(image-pame)                                                                                                                                                          
+                                                                                                                                                                                                             
+         else:                                                                                                                                                                                               
+                 error()                                                                                                                                                                                     
+   _                                                                                                                                                                                                         
+ main()                                                                                                                                                                                                      
+                                                                                                                                                                                                             
+_____________________________________________________________________________________________________________________________________________________________________________________________________________

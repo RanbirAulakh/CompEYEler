@@ -34,6 +34,8 @@ def main():
                 # print(str(row) + " " + str(col))
                 if letter in inv_map:
                     label = inv_map[letter]
+                elif letter.isupper():
+                    label = label + "_upper"
                 # print(label)    
                 
                 save_path = sys.argv[3]

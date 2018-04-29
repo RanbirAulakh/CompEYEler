@@ -90,7 +90,7 @@ model.add(Flatten())
 model.add(Dense(500, activation="relu"))
 
 # Output layer with 70 nodes (one for each possible letter/number we predict)
-model.add(Dense(74, activation="softmax"))
+model.add(Dense(97, activation="softmax"))
 
 # Ask Keras to build the TensorFlow model behind the scenes
 model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
