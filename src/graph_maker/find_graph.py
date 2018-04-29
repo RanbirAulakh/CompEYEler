@@ -6,16 +6,22 @@ also lets us compare accuracy
 
 """
 import sys
+sys.path.append("..")
 sys.path.append("../segmenter")
 sys.path.append("../neural_network")
 sys.path.append("../conv_segment")
 import cv2
-from keras import train_network
+from neural_network.keras import train_network
+from segment import segment
+import pickle
+import numpy as np
+from helpers import crop_letter, resize_to_fit
+from tensorflow.python.keras.models import load_model
 
 TEST_PNG = "perfect_impossible_code.png"
 EXPECTED = "output.txt"
 
-def get_accuracy(image_characters, model):
+def get_accuracy(image_characters, model, lb):
     """
     Tests a model on a few defined training sets from the greedy segmenter
     :returns overallaccuracy plot, character_accuracy plot
@@ -61,30 +67,30 @@ def find_best_epoch(min_epoch=1, max_epoch=1000):
     Iterates over epochs min-max, produces graphs for all in terms of accuracy
     against the training set we have
     """
-    if len(image.shape) > 2:
+    MODEL_FILENAME = "model.hdf5"
+    MODEL_LABELS_FILENAME = "model_labels.dat"
+    VALIDATION_FOLDER = "segmenter_output"
+
+    grey = cv2.imread(TEST_PNG)
+    if len(grey.shape) > 2:
         grey = cv2.cvtColor(grey, cv2.COLOR_BGR2GRAY)
-    if conv_segment:
-        image_characters = perform_conv_segmentation(grey)
-    else:
-        image_characters = segment(grey, greedy_thresh)
+    image_characters = segment(grey)
+    with open(MODEL_LABELS_FILENAME) as f:
+        lb = pickle.load(f)
 
     for i in range(min_epoch, max_epoch):
         print("TESTING EPOCH =", i)
-        train_network(min_epoch)
-
-        MODEL_FILENAME = "model.hdf5"
-        MODEL_LABELS_FILENAME = "model_labels.dat"
-        VALIDATION_FOLDER = "segmenter_output"
-
-        with open(MODEL_LABELS_FILENAME, "rb") as f:
-            lb = pickle.load(f)
+        train_network(min_epoch, "../neural_network/images")
 
         # Load the trained neural network
         model = load_model(MODEL_FILENAME)
 
-        accuracy, letter_match = get_accuracy(image_characters, model)
+        accuracy, letter_match = get_accuracy(image_characters, model, lb)
         print("ACCURACY @EPOCH", i, ":", accuracy)
-
+        with open('dataepoch' + str(i)) as f:
+            for key in letter_match:
+                f.write(str(accuracy) + "\n")
+                f.write(str(key) + "\t" + str(letter_match[key]) +"\n")
 
 
 def main():
@@ -93,7 +99,7 @@ def main():
     """
     import sys
     import matplotlib.pyplot as plt
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 1:
         print('usage: python find_graph.py')
         sys.exit()
     find_best_epoch()
