@@ -21,12 +21,12 @@ Outputs:
 repeater - float describing a width of a cell
 offset - integer describing when the first cell starts
 """
-def accumulate(crossings, threshold, search_start):
+def accumulate(crossings, threshold, search_start, search_space_multiplier):
     size = crossings.shape[0]
     best_offset = 0
     best_repeater = 2
     best_accumulator = float('inf')
-    possible_repeaters = np.linspace(search_start, search_start * 3, num=500)
+    possible_repeaters = np.linspace(search_start, search_start * search_space_multiplier, num=500)
     for true_repeater in possible_repeaters:
         for offset in range(search_start):
             accumulator = 0
@@ -98,7 +98,8 @@ def standardize(img):
 Returns binary image divided into equal sized chunks.
 """
 def segment(img, threshold=4.6):
-
+    print("Segmenter started")  
+    
     img2 = standardize(img)
 
     edges = cv2.Canny(img2, 100, 200)
@@ -122,7 +123,7 @@ def segment(img, threshold=4.6):
     widths = sorted(widths)
     heights = sorted(heights)
 
-    print(heights)
+#     print(heights)
 
     ninety_five_width = widths[len(widths)//20 * 19]
     ninety_five_height = heights[len(heights)//20 * 19]
@@ -131,16 +132,18 @@ def segment(img, threshold=4.6):
     # cv2.waitKey()
     # cv2.destroyAllWindows()
 
-    print(ninety_five_width)
-    print(ninety_five_height)
+    # print(ninety_five_width)
+    # print(ninety_five_height)
 
     img = img2
 
     x_crossing_counts = crossings(img, axis=1)
-    x_repeater, x_offset = accumulate(x_crossing_counts, threshold, ninety_five_width)
+    x_repeater, x_offset = accumulate(x_crossing_counts, threshold, ninety_five_width, 2)
 
     y_crossing_counts = crossings(img, axis=0)
-    y_repeater, y_offset = accumulate(y_crossing_counts, threshold, ninety_five_height)
+    
+    # we need the multiplier to be higher, since there's more space vertically between letters
+    y_repeater, y_offset = accumulate(y_crossing_counts, threshold, ninety_five_height, 3)
 
     x_iterations = int((img.shape[1] - x_offset) / x_repeater) + 1
     y_iterations = int((img.shape[0] - y_offset) / y_repeater) + 1
@@ -149,6 +152,8 @@ def segment(img, threshold=4.6):
     print("Block height: " + str(y_repeater))
     print("Optimal x-offset: " + str(x_offset))
     print("Optimal y-offset: " + str(y_offset))
+    print("Segmenter ended")
+    print("")
 
     segments = np.full((y_iterations, x_iterations, int(y_repeater + 1), int(x_repeater + 1)), fill_value = 255)
     for y_iter in range(y_iterations):
@@ -197,10 +202,6 @@ def main():
         for col in range(segments.shape[1]):
             cv2.imwrite('./segmenter_output/' + str(row) + "-" + str(col) + ".png" , segments[row][col])
     print('segments written to /segmenter_output')
-    print('if segments are not wide enough, decrease the threshold')
-    print('if segments are too wide, increase the threshold')
-    print('there will be better detection for this soon, i promise')
-
 
 if __name__ == "__main__":
     main()
