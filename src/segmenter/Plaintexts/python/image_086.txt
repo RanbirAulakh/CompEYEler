@@ -1,0 +1,262 @@
+ # author: ranbir aulakh - rsas5330
+ # assignment: HW1 - Basic Image Processing with OpenCV
+
+ import cv2
+ import numpy as np
+ import sys, os, operator
+ from matplotlib import pyplot as plt
+ from collections import Counter
+
+
+ '''
+ In order to find a dominant color
+         - Calculate the mean saturation fo reach color channel
+         - Then calculate the absolute difference between
+                 the highest saturation and second highest
+ '''
+ def splitBGR(image_name, show, threshold_val):
+         image = cv2.imread(image_name, cv2.IMREAD_UNCHANGED)
+         zeros = np.zeros(image.shape[:2]).astype(np.uint8)
+
+         # split channels
+         b,g,r = cv2.split(image)
+
+         blueImg = cv2.merge((b, zeros, zeros))
+         greenImg = cv2.merge((zeros, g, zeros))
+         redImg = cv2.merge((zeros, zeros, r))
+
+         # convert to HSV
+         blueImgHSV = cv2.cvtColor(blueImg, cv2.COLOR_BGR2HSV)
+         greenImgHSV = cv2.cvtColor(greenImg, cv2.COLOR_BGR2HSV)
+         redImgHSV = cv2.cvtColor(redImg, cv2.COLOR_BGR2HSV)
+
+
+
+
+
+         if(show == "true"):
+                 numpy_horizontal = np.hstack((image, blueImgHSV, greenImgHSV, redImgHSV))
+                 numpy_horizontal_concat = np.concatenate((image, blueImgHSV, greenImgHSV, redImgHSV), axis=1)
+                 cv2.imshow('Regular Image, Blue HSV Channel, Green HSV Channel, Red HSV Channel', numpy_horizontal_concat)
+
+         blueImgHSV[:,:,1][blueImgHSV[:,:,2] < threshold_val] = 0
+         blueSaturationMean = np.mean(blueImgHSV[:,:,1])
+
+         greenImgHSV[:,:,1][greenImgHSV[:,:,2] < threshold_val] = 0
+         greenSaturationMean = np.mean(greenImgHSV[:,:,1])
+
+         redImgHSV[:,:,1][redImgHSV[:,:,2] < threshold_val] = 0
+         redSaturationMean = np.mean(redImgHSV[:,:,1])
+
+         # store in list to get the most dominant color (channel)
+         print("Channel Saturation Results: (B): " + str(blueSaturationMean) + " (G): " + str(greenSaturationMean) + " (R): " + str(redSaturationMean))
+         dicSaturation = { "Blue Channel":blueSaturationMean, "Green Channel":greenSaturationMean, "Red Channel":redSaturationMean }
+
+         # print most dominant color
+         newDict = list(Counter(dicSaturation).most_common(2))
+         firstHighestSaturation = newDict[0]
+         secondHighestSaturation = newDict[1]
+         print("Dominant Channel:", firstHighestSaturation)
+         print("Highest Saturation:", firstHighestSaturation)
+         print("Second Highest Saturation:", secondHighestSaturation)
+
+         # absolute diff between color w/ high sat and color w/ 2nd high sat
+         absoluteDiff = firstHighestSaturation[1] - secondHighestSaturation[1]
+         print("Absolute Difference between First & Second Highest Saturation", absoluteDiff)
+
+         if(show == "true"):
+                 cv2.waitKey(0)
+
+         return image, firstHighestSaturation, absoluteDiff
+
+ '''
+ It scans the directory for all the possible images. Then use "splitBGR"
+ function to apply all images and sort them into 4 sets based on dominant color.
+ '''
+ def applyDSandSort(folder, threshold_val):
+         # set show to false
+         show = "false"
+
+         if(os.path.isdir(folder) == False):
+                 print(folder + " is not a valid directory path...")
+                 error()
+
+         trackResult = {"None":0, "Blue":0, "Green":0, "Red":0}
+
+         # get directory
+         for root, dirs, files in os.walk(folder):
+
+                 # get files in root directory
+                 for name in files:
+                         image_name = os.path.join(root, name)
+                         trackResult = readApplyStore(name, image_name, show, threshold_val, trackResult)
+
+                 # get files in subdirectory(ies)
+                 for name in dirs:
+                         image_name = os.path.join(root, name)
+                         trackResult = readApplyStore(name, image_name, show, threshold_val, trackResult)
+
+         print("RESULT:", trackResult)
+
+ '''
+ Store images to dominant folders
+ '''
+ def readApplyStore(name, image_name, show, threshold_val, trackResult):
+         print("Reading... " + image_name)
+
+         if(os.path.isfile(image_name)):
+                 # sort them into folders based on dominant color (B, G, R, NA)
+                 try:
+                         # determine the dominant color
+                         image, firstHighestSaturation, absoluteDiff = splitBGR(image_name, show, threshold_val)
+
+                         # create 4 folders (if does not exist)
+                         createPath()
+
+                         dominant_color = firstHighestSaturation[0]
+
+                         # store them in correct set based on their dominant color
+                         try:
+                                 print(os.getcwd() + "/sets/No_dominant/" + name)
+                                 if(absoluteDiff == 0):
+                                         cv2.imwrite(os.getcwd() + "/sets/No_dominant/" + name, image)
+                                         trackResult["None"] += 1
+                                         print("Added to No dominant Folder!")
+                                 elif("Blue" in dominant_color):
+                                         cv2.imwrite(os.getcwd() + "/sets/Blue_dominant/" + name, image)
+                                         trackResult["Blue"] += 1
+                                         print("Added to Blue Folder!")
+                                 elif("Green" in dominant_color):
+                                         cv2.imwrite(os.getcwd() + "/sets/Green_dominant/" + name, image)
+                                         trackResult["Green"] += 1
+                                         print("Added to Green Folder!")
+                                 elif("Red" in dominant_color):
+                                         cv2.imwrite(os.getcwd() + "/sets/Red_dominant/" + name, image)
+                                         trackResult["Red"] += 1
+                                         print("Added to Red Folder!")
+                         except:
+                                 print("Can't copy file! (" + image_name + ")")
+
+                 except:
+                         print("Bad File! " + image_name)
+
+         print("=============")
+         return trackResult
+
+
+ '''
+ Create 4 folders under set folder
+ '''
+ def createPath():
+         sets = ["sets", "sets/Blue_dominant", "sets/Green_dominant", "sets/Red_dominant", "sets/No_dominant"]
+         for i in sets:
+                 cwd = os.getcwd() + "/" + i
+                 if not os.path.exists(cwd):
+                         os.makedirs(cwd)
+
+ '''
+ Construct a per-channel histogram of color intensisites
+ '''
+ def histrogramPlot(image_name):
+         image = cv2.imread(image_name)
+         color = ('b','g','r')
+         for i,col in enumerate(color):
+                 histr = cv2.calcHist([image],[i],None,[256],[0,256])
+                 plt.title('Original Image Histogram Plot')
+                 plt.plot(histr,color = col)
+                 plt.xlim([0,256])
+         plt.show()
+
+ '''
+ Construct a per-channel histogram of color intensisites
+ Displaying two (original and eq)
+ '''
+ def showTwoHistrogramPlot(org_image_name, eq_image_name):
+         org_image_name = cv2.imread(org_image_name)
+         eq_image_name = cv2.imread(eq_image_name)
+
+         color = ('b','g','r')
+
+         for i,col in enumerate(color):
+                 histr = cv2.calcHist([org_image_name],[i],None,[256],[0,256])
+                 plt.figure(1)
+                 plt.title('Original Image Histogram Plots')
+                 plt.plot(histr,color = col)
+                 plt.xlim([0,256])
+
+         for i,col in enumerate(color):
+                 histr = cv2.calcHist([eq_image_name],[i],None,[256],[0,256])
+                 plt.figure(2)
+                 plt.title('Eq L-Channel Histogram Plots')
+                 plt.plot(histr,color = col)
+                 plt.xlim([0,256])
+
+         plt.show()
+
+
+ '''
+ Apply Histogram qualization to each choosen images and verify the result
+ -- Using L-Channel
+
+ Construct graphical histogram plots
+ '''
+ def histrogramEqualization(image_name):
+         # decided to use L-Channel
+         image = cv2.imread(image_name)
+         image_lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+         image_lab[:,:,0] = cv2.equalizeHist(image_lab[:,:,0])
+         image_eq = cv2.cvtColor(image_lab, cv2.COLOR_LAB2BGR)
+
+         # create temp folder to store histrogram equalization
+         cwd = os.getcwd() + "/images_eq/"
+         if not os.path.exists(cwd):
+                 os.makedirs(cwd)
+
+         updated_image_name = cwd + '.'.join(image_name.split('.')[:-1]) + '_labeq.' + image_name.split('.')[-1]
+         cv2.imwrite(updated_image_name, image_eq)
+
+         # after saving a new eq image, anylze and plot it
+         showTwoHistrogramPlot(image_name, updated_image_name)
+
+ '''
+ Display error message and quit the script
+ '''
+ def error():
+         print("Invalid Command. Usage: stdrbg.py <val> <threshold value> <show> <image_name>")
+         print("<val> must be in int value, ranging from 1 to 4")
+         print("<val> 1 - Calculate Mean Saturation & Find Absolute Difference")
+         print("<val> 2 - Apply 100 Images (Ensure your <image_name> is a directory) ")
+         print("<val> 3 - Plot & Analyze Histrogram")
+         print("<val> 4 - Apply Histrogram Equalization")
+         print("<threshold value> choose threshold value")
+         print("<show> true/false if you want to show images (debugging)")
+         print("<image_name> valid image location (if <val> == 2, ensure its a directroy that contains 100 images")
+         sys.exit(1)
+
+
+ def main():
+         if(len(sys.argv) != 5):
+                 error()
+
+         val = int(sys.argv[1])
+         threshold_val = int(sys.argv[2])
+         show = sys.argv[3]
+         image_name = sys.argv[4]
+
+         if(val == 1):
+                 splitBGR(image_name, show, threshold_val)
+
+         elif(val == 2):
+                 folder = image_name
+                 applyDSandSort(folder, threshold_val)
+
+         elif(val == 3):
+                 histrogramPlot(image_name)
+
+         elif(val == 4):
+                 histrogramEqualization(image_name)
+
+         else:
+                 error()
+
+ main()
