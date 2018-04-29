@@ -1,0 +1,16 @@
+# file: test1.py
+# author: First Last
+
+def add(x, y):
+	return x + y
+
+def main():
+	print("Starting program...")
+
+	user_input_number_1 = input("Enter Number: ")
+	user_input_number_2 = input("Enter Number: ")
+
+	sum_both = add(user_input_number_1, user_input_number_2)
+	print(sum_both)
+
+main()
