@@ -17,9 +17,12 @@ import pickle
 import numpy as np
 from helpers import crop_letter, resize_to_fit
 from tensorflow.python.keras.models import load_model
+import classifier
 
 TEST_PNG = "perfect_impossible_code.png"
-EXPECTED = "output.txt"
+with open("output.txt", "r") as f:
+    EXPECTED = f.read()
+    EXPECTED = EXPECTED[0:len(EXPECTED)-1]
 
 def get_accuracy(image_characters, model, lb):
     """
@@ -49,7 +52,8 @@ def get_accuracy(image_characters, model, lb):
             if letter in classifier.FONT_MAP:
                 letter = classifier.FONT_MAP[letter]
             result += letter
-    print(result)
+    print(len(result))
+    print(len(EXPECTED))
 
     letter_match = {}
     total_matched = 0
@@ -75,21 +79,21 @@ def find_best_epoch(min_epoch=1, max_epoch=1000):
     if len(grey.shape) > 2:
         grey = cv2.cvtColor(grey, cv2.COLOR_BGR2GRAY)
     image_characters = segment(grey)
-    with open(MODEL_LABELS_FILENAME) as f:
+    with open(MODEL_LABELS_FILENAME, 'rb') as f:
         lb = pickle.load(f)
 
     for i in range(min_epoch, max_epoch):
         print("TESTING EPOCH =", i)
-        train_network(min_epoch, "../neural_network/images")
+        train_network(i, "../neural_network/images")
 
         # Load the trained neural network
         model = load_model(MODEL_FILENAME)
 
         accuracy, letter_match = get_accuracy(image_characters, model, lb)
         print("ACCURACY @EPOCH", i, ":", accuracy)
-        with open('dataepoch' + str(i)) as f:
+        with open('dataepoch' + str(i), 'w') as f:
+            f.write(str(accuracy) + "\n")
             for key in letter_match:
-                f.write(str(accuracy) + "\n")
                 f.write(str(key) + "\t" + str(letter_match[key]) +"\n")
 
 
