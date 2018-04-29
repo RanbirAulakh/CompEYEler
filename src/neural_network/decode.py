@@ -43,6 +43,8 @@ def decode(image, threshold=True):
 
     # Convert the one-hot-encoded prediction back to a normal letter
     letter = lb.inverse_transform(prediction)[0]
+    if "_upper" in letter:
+        letter = letter[0:1]
     if letter in classifier.FONT_MAP:
         return classifier.FONT_MAP[letter]
     return letter
