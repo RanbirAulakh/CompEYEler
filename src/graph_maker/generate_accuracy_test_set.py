@@ -63,7 +63,7 @@ def main():
         sys.exit()
     print(sys.argv[1])
     res = train_compeyele(cv2.imread(sys.argv[1]))
-    with open("output.txt", "w") as text_file:
+    with open(argv[1] + ".txt", "w") as text_file:
         text_file.write(res)
 
 if __name__ == '__main__':
