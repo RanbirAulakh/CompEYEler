@@ -1,2 +1,0 @@
-copy_image = sub_image.copy()
-copy_iamge = cv2.GaussianBlur(copy_image, (17,17), 0)
