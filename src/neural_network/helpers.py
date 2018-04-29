@@ -1,4 +1,3 @@
-import imutils
 import cv2
 import numpy as np
 
@@ -50,5 +49,8 @@ def crop_letter(image):
         # this image is a space
         return image
     else:
-        return image[y:y + h, x:x + w]
+        cut = image[y:y+h, x:x+w]
+        white = 255
+        image = cv2.copyMakeBorder(cut, 1, 1, 1, 1, cv2.BORDER_CONSTANT, white)
+        return image
     
