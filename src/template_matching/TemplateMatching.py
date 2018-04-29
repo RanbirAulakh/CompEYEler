@@ -13,6 +13,34 @@ import helpers
 import sys
 sys.path.append("../neural_network/")
 
+def template_segment(image):
+    # convert to gray scale image
+    character_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    cv2.imshow("original gray", character_image)
+
+    # threshold the image, convert it to black/white
+    thresh, im_bw = cv2.threshold(character_image, threshold, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    im_bw = cv2.bitwise_not(im_bw)
+
+    frame, contours, hierarchy = cv2.findContours(im_bw, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    rects = [cv2.boundingRect(c) for c in contours]
+
+    # https://github.com/RanbirAulakh/CompEYEler/commit/fab90b2cf8290c939191242d0403b1bd24f36349
+    for rect in rects:
+        cv2.rectangle(image, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 1)
+
+    leng = int(rect[3] * 1.6)
+
+    pt1 = int(rect[1] + rect[3] // 2 - leng // 2)
+    pt2 = int(rect[0] + rect[2] // 2 - leng // 2)
+
+    roi = im_bw[pt1:pt1+leng, pt2:pt2+leng]
+
+    roi = cv2.resize(roi, (28,28), interpolation=cv2.INTER_AREA)
+    roi = cv2.dilate(roi, (3,3))
+
+    return roi
+
 def template_match_char(char_image, threshold):
     # read character image
     image = cv2.imread(char_image)
