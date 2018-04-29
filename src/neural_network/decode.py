@@ -25,6 +25,7 @@ model = load_model(MODEL_FILENAME)
 Decodes an image using the pre-trained model.
 """
 def decode(image, threshold=True):
+    image = image.astype(np.uint8)
     # threshold
     if threshold:
         _, image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -42,6 +43,8 @@ def decode(image, threshold=True):
 
     # Convert the one-hot-encoded prediction back to a normal letter
     letter = lb.inverse_transform(prediction)[0]
+    if "_upper" in letter:
+        letter = letter[0:1]
     if letter in classifier.FONT_MAP:
         return classifier.FONT_MAP[letter]
     return letter
