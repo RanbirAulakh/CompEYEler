@@ -25,6 +25,7 @@ def compeyele(image, \
     Segments the image using either a greedy approach or a convolutional greedy
     approach, then converts the segmented character to text by using either a
     neural network (default) or template matching approach.
+    :arg image input image
     :arg conv_segment whether or not to use the convolutional segmentation
          approach
     :arg greedy_thresh value to use for binarization with greedy segmentation

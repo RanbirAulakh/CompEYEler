@@ -54,9 +54,12 @@ def main():
                     # we have too much of the character, skip it
                     continue
                 
-                save_path = os.path.join(save_path, label + (".png" * count))	
-                # print(save_path)
-                cv2.imwrite(save_path, segments[row][col])
+                try:
+                    save_path = os.path.join(save_path, label + (".png" * count))	
+                    # print(save_path)
+                    cv2.imwrite(save_path, segments[row][col])
+                except:
+                    pass
                 
                 counts[label] = count + 1
                 

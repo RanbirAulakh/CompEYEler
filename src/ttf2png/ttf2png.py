@@ -29,8 +29,7 @@ def main(folder):
             os.mkdir(basename + "/18pt")
 
         characters = []
-        shortcut = " `1234567890-=qwertyuiop[]\\asdfghjkl;\'zxcvbnm,./~!@#$%" +\
-                "^&*()_+QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?|"
+        shortcut = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         for x in ttf["cmap"].tables:
             for y in x.cmap.items():
                 char_unicode = chr(y[0])
@@ -47,7 +46,7 @@ def main(folder):
                         "-font", TTF_PATH, \
                         "-pointsize", str(FONT_SIZE), \
                         "label:\\" + character+"", \
-                        basename + "/" + str(FONT_SIZE) + "pt/" + char_name +".png"]
+                        basename + "/" + str(FONT_SIZE) + "pt/" + char_name +"_upper.png"]
                 line = " ".join(imagemagick)
                 print(line)
                 process = Popen(line, stderr = PIPE, stdout = PIPE, shell = True)
