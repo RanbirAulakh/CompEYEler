@@ -25,6 +25,7 @@ model = load_model(MODEL_FILENAME)
 Decodes an image using the pre-trained model.
 """
 def decode(image, threshold=True):
+    image = image.astype(np.uint8)
     # threshold
     if threshold:
         _, image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
