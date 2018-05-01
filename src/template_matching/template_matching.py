@@ -14,35 +14,38 @@ import glob
 sys.path.append("../neural_network/")
 import helpers
 
-def template_segment(image):
-    # convert to gray scale image
-    character_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    cv2.imshow("original gray", character_image)
+def template_segment(image, threshold):
+    # convert to grayscale image
+    img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    cv2.imshow("original gray", img_gray)
 
     # threshold the image, convert it to black/white
-    thresh, im_bw = cv2.threshold(character_image, threshold, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    im_bw = cv2.bitwise_not(im_bw)
+    thresh, im_bw = cv2.threshold(img_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    cv2.imshow("black and white", im_bw)
 
-    frame, contours, hierarchy = cv2.findContours(im_bw, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # find contours
+    im_bw_copy = im_bw.copy()
+    frame, contours, hierarchy = cv2.findContours(im_bw_copy, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    print(len(contours))
+
     rects = [cv2.boundingRect(c) for c in contours]
-
-    # https://github.com/RanbirAulakh/CompEYEler/commit/fab90b2cf8290c939191242d0403b1bd24f36349
     for rect in rects:
         cv2.rectangle(image, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255), 1)
 
-    leng = int(rect[3] * 1.6)
+        # Make the rectangular region around the digit
+        leng = int(rect[3] * 1.6)
+        pt1 = int(rect[1] + rect[3] // 2 - leng // 2)
+        pt2 = int(rect[0] + rect[2] // 2 - leng // 2)
+        roi = im_bw[pt1:pt1 + leng, pt2:pt2 + leng]
 
-    pt1 = int(rect[1] + rect[3] // 2 - leng // 2)
-    pt2 = int(rect[0] + rect[2] // 2 - leng // 2)
+        # Resize the image
+        roi = cv2.resize(roi, (28, 28), interpolation=cv2.INTER_AREA)
+        roi = cv2.dilate(roi, (3, 3))
 
-    roi = im_bw[pt1:pt1+leng, pt2:pt2+leng]
-
-    roi = cv2.resize(roi, (28,28), interpolation=cv2.INTER_AREA)
-    roi = cv2.dilate(roi, (3,3))
-
+    cv2.imshow("Done Contours", image)
     return roi
 
-def template_match_char(char_image, threshold):
+def template_match_char(char_image, threshold, debug):
     logging.info("[BEGIN] Executing TEMPLATE MATCHING")
     # read character image
     image = cv2.imread(char_image)
@@ -51,7 +54,7 @@ def template_match_char(char_image, threshold):
     character_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     if debug:
-        cv2.imshow("Original Gray", character_image)
+        cv2.imshow("Char Gray", character_image)
 
     # threshold the image, convert it to black/white
     thresh, im_bw = cv2.threshold(character_image, threshold, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -60,14 +63,14 @@ def template_match_char(char_image, threshold):
     # resize to fit then crop
     crop_image = helpers.crop_letter(im_bw)
     if debug:
-        cv2.imshow("Cropped Letter", crop_image)
+        cv2.imshow("Chara Cropped", crop_image)
 
     resized_image = helpers.resize_to_fit(crop_image.astype(np.uint8), 20, 20)
     if debug:
-        cv2.imshow("Resized Letter", resized_image)
+        cv2.imshow("Char Resized", resized_image)
 
     # directory full of texts -- to check if it's match
-    files = glob.glob('../neural_network/images/**/18pt/*.png')
+    files = glob.glob('../neural_network/images/**.ttf/**/*.png')
 
     text_dict = {}
     for file in files:
@@ -114,14 +117,13 @@ def template_match_char(char_image, threshold):
 
     logging.info("Best Accuracy Result: {0} : {1} [File name: {2}]".format(text_dict[sorted_dict[0]]["accuracy"],
                                                                 os.path.basename(sorted_dict[0]), sorted_dict[0]))
+
     logging.info("Next Best 3 Accuracy Result...")
     for i in range(1, 4):
         logging.info("Accuracy Result #{0}: {1} : {2} [File name: {3}]".format(i+1, text_dict[sorted_dict[i]]["accuracy"],
                                                                            os.path.basename(sorted_dict[i]),
                                                                            sorted_dict[i]))
 
-    if debug:
-        cv2.waitKey(0)
     logging.info("[END] Finished TEMPLATE MATCHING")
 
 
@@ -137,6 +139,9 @@ def main():
     parser.add_argument("-d", "--debug",
                         help="Enable Debug",
                         required=False, action="store_true")
+    parser.add_argument("-c", "--contours",
+                        help="Enable Contour",
+                        required=False, action="store_true")
     args = parser.parse_args()
 
     if args.debug:
@@ -151,6 +156,13 @@ def main():
         threshold = 100
 
     template_match_char(image, threshold, debug)
+
+    if args.contours:
+        image = cv2.imread(image)
+        template_segment(image, threshold)
+
+    if debug:
+        cv2.waitKey(0)
 
 if __name__ == '__main__':
     main()
