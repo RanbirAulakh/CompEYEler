@@ -123,9 +123,6 @@ def perform_conv_segmentation(src):
     for line in segment_lines(thresh):
         chars = segment_characters(line)
         characters.append(chars)
-        for char in chars:
-            cv2.imshow(str(i), char)
-            cv2.waitKey()
     return np.array(characters)
 
 def main():
