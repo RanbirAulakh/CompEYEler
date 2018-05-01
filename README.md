@@ -2,8 +2,36 @@
 
 ## Usage
 ```
-# note, requires python 3
-python3 compeyeler.py <image>
+# note, all require python 3
+
+# main application
+python compeyeler.py <image>
+
+# template matching 
+python template_matching.py -i <character image>
+
+# train neural network
+python keras.py
+
+# test decoder on neural network
+python decoder.py <character image>
+
+# convolutional segmenter
+python conv_segment.py <image>
+
+# segmenter
+python segment.py <image>
+
+# generate epoch data from (train neural networks and test against a black box image that isn't in training set)
+python find_graphs.py
+# to be run after find_graphs.py (seperated because my computer crashed in the middle of find_graphs once)
+# generates the matplotlib graphs for the epoch data
+python make_graphs.py
+
+
+# generate training images from TTF on your operating system
+python ttf2png.py <folder of where to search for ttf>
+
 ```
 _<image> supplied is the location of the image on your OS_
 
