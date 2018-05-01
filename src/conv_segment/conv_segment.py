@@ -45,6 +45,7 @@ def segment_lines(src):
     out an array
     """
     line_locs = block_me(src, False)
+    line_locs[line_locs > 0] = 255
     lines = []
 
     current = 0
@@ -110,6 +111,7 @@ def force_black_background(src):
             th[th.shape[0] - 1, th.shape[1] - 1])# / 255.0
     if i/255.0 >= 3:
         th = cv2.bitwise_not(th.astype(np.uint8))
+		
     return th.astype(np.uint8)
 
 def perform_conv_segmentation(src):
@@ -137,7 +139,7 @@ def main():
         sys.exit()
     image = cv2.imread(sys.argv[1])
     chars = perform_conv_segmentation(image)
-    print(chars)
+    #print(chars)
 
 if __name__ == '__main__':
     main()
