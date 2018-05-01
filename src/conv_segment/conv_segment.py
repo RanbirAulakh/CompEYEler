@@ -36,8 +36,8 @@ def block_me(src, vertical=True):
     :return the first row in the image, we dont need all of them
     """
     if vertical:
-        return convolve(src, np.ones((src.shape[0]*2, 1)))#[0].reshape((1, src.shape[1]))
-    return convolve(src, np.ones((1, src.shape[1]*2)))#[:,0].reshape((src.shape[0], 1))
+        return convolve(src, np.ones((src.shape[0]*2, 1)))[0].reshape((1, src.shape[1]))
+    return convolve(src, np.ones((1, src.shape[1]*2)))[:,0].reshape((src.shape[0], 1))
 
 def segment_lines(src):
     """
@@ -47,7 +47,6 @@ def segment_lines(src):
     line_locs = block_me(src, False)
     line_locs[line_locs > 0] = 255
     lines = []
-    cv2.imwrite("lines.png", line_locs)
 
     current = 0
     for row in range(line_locs.shape[0]):
@@ -65,7 +64,6 @@ def segment_characters(line):
     Takes in an arbitrary line and segments out the characters and spaces
     """
     char_locs = block_me(line, True)
-    cv2.imwrite("line.png", char_locs)
     # compute the character width
     mean, mode, values = compute_avg_character_width(line)
     #print("Character Mean:", mean)
@@ -114,7 +112,6 @@ def force_black_background(src):
     if i/255.0 >= 3:
         th = cv2.bitwise_not(th.astype(np.uint8))
 		
-    cv2.imwrite("black background.png", th.astype(np.uint8))
     return th.astype(np.uint8)
 
 def perform_conv_segmentation(src):
@@ -128,9 +125,6 @@ def perform_conv_segmentation(src):
     for line in segment_lines(thresh):
         chars = segment_characters(line)
         characters.append(chars)
-        # for char in chars:
-        #     cv2.imshow(str(i), char)
-        #     cv2.waitKey()
     return np.array(characters)
 
 def main():
